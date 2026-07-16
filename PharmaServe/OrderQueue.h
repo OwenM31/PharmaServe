@@ -16,9 +16,9 @@ class OrderQueue {
     public:
         void Push(const Order& order);
     
-        bool Pop(Order& outOrder);
+        bool WorkerPop(Order& outOrder);
 
-        bool TryPop(Order& outOrder);
+        bool Pop(Order& outOrder);
         
 		size_t Size() const;
 		bool IsEmpty() const;
