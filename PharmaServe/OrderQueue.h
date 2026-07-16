@@ -8,7 +8,7 @@ class OrderQueue {
     public:
         void Push(const Order& order);
     
-        bool Pop(const Order& order);
+        bool Pop(Order& order);
         
 		size_t Size() const;
 

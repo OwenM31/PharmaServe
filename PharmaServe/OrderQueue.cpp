@@ -4,12 +4,14 @@ void OrderQueue::Push(const Order& order) {
 	orderQueue.push(order);
 }
 
-bool OrderQueue::Pop(const Order& order) {
-	if (!orderQueue.empty() && orderQueue.front().orderId == order.orderId) {
-		orderQueue.pop();
-		return true;
+bool OrderQueue::Pop(Order& outOrder) {
+// Pop the front order into `outOrder` parameter
+	if (orderQueue.empty()) {
+		return false;
 	}
-	return false;
+	outOrder = orderQueue.front();
+	orderQueue.pop();
+	return true;
 }
 
 size_t OrderQueue::Size() const {
