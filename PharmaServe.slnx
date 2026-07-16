@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="PharmaServe/PharmaServe.vcxproj" />
+  <Project Path="PharmaServe/PharmaServe.vcxproj" Id="8cedddfc-a3b8-421c-ab97-732526a00c26" />
 </Solution>
