@@ -1,7 +1,37 @@
 #include "OrderQueue.h"
 #include <chrono>
 #include <iostream>
+#include <random>
 #include <thread>
+#include <vector>
+
+void SimulateOrderStream(OrderQueue &orderQueue, int orderCount) {
+  std::vector drugNames = {"Acetaminophen", "Amoxicillin",     "Aspirin",
+                           "Ibuprofen",     "Pseudoephedrine", "Tylenol"};
+
+  std::mt19937 rng(std::random_device{}());
+  std::uniform_int_distribution drugDist(0, (int)drugNames.size());
+  std::uniform_int_distribution quantityDist(1, 5);
+  std::uniform_int_distribution delayDist(100, 500);
+
+  std::cout << "\n[Generator] Starting simulation of " << orderCount
+            << " orders...\n";
+
+  for (int i = 1; i <= orderCount; i++) {
+    int drugIndex = drugDist(rng);
+    int quantity = quantityDist(rng) * 50;
+    orderQueue.Push({i, drugNames[drugIndex], quantity});
+    std::cout << "[Generator] Pushed order " << i << " ("
+              << drugNames[drugIndex] << " x" << quantity << ")\n";
+    std::this_thread::sleep_for(std::chrono::milliseconds(delayDist(rng)));
+  }
+
+  std::cout << "[Generator] All orders pushed. Waiting for worker to drain "
+               "queue...\n";
+  orderQueue.WaitUntilEmpty();
+  std::cout << "[Generator] Queue is empty. Shutting down...\n";
+  orderQueue.Shutdown();
+}
 
 void Worker(OrderQueue &orderQueue) {
   Order order;
