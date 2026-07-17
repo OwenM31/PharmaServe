@@ -3,10 +3,10 @@
 
 void OrderQueue::Push(const Order &order) {
   // Adds an order and wakes a `WorkerPop` thread.
-  {
-    std::lock_guard<std::mutex> lock(mutex);
-    orderQueue.push(order);
-  }
+
+  std::lock_guard<std::mutex> lock(mutex);
+  orderQueue.push(order);
+
   cv.notify_one();
 }
 
@@ -34,6 +34,12 @@ bool OrderQueue::WorkerPop(Order &outOrder) {
   }
   outOrder = orderQueue.front();
   orderQueue.pop();
+
+  // If now empty, alert `WaitUntilEmpty` thread.
+  if (orderQueue.empty()) {
+    cv.notify_all();
+  }
+
   return true;
 }
 
@@ -54,9 +60,9 @@ void OrderQueue::WaitUntilEmpty() {
 
 void OrderQueue::Shutdown() {
   // Wakes all `WorkerPop` threads to shutdown.
-  {
-    std::lock_guard lock(mutex);
-    shuttingDown = true;
-  }
+
+  std::lock_guard lock(mutex);
+  shuttingDown = true;
+
   cv.notify_all();
 }
