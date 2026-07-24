@@ -34,4 +34,7 @@ private:
   std::map<unsigned int, std::unique_ptr<WorkerHandle>> workers;
   unsigned int nextId{0};
   mutable std::shared_mutex workersMutex;
+
+  std::thread threadJoiner;
+  std::atomic<bool> threadJoinerRunning;
 };

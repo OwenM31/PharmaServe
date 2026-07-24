@@ -1,9 +1,5 @@
 // WorkerHandle.h
 
-// 1 thread,
-// 1 atomic<bool> to signal shutdown,
-// 1 WorkerStatus to hold info,
-
 #pragma once
 #include <atomic>
 #include <thread>
@@ -12,6 +8,9 @@
 
 struct WorkerHandle {
   std::thread worker;
-  std::atomic<bool> active;
+  std::atomic<bool> active;   // When this is false, the worker finishes the
+                              //     current order and stops.
+  std::atomic<bool> finished; // This is set to true when the last order
+                              //     finishes, then the thread is rejoined.
   WorkerStatus status;
 };
