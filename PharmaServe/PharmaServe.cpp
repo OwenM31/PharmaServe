@@ -22,9 +22,9 @@ void SimulateOrderStream(OrderQueue &orderQueue, int orderCount) {
   std::cout << "\n[Generator] Starting simulation of " << orderCount
             << " orders...\n";
 
-  for (unsigned int i = 1; i <= orderCount; i++) {
+  for (uint32_t i = 1; i <= orderCount; i++) {
     int drugIndex{drugDist(rng)};
-    auto quantity{static_cast<unsigned int>(quantityDist(rng) * 50)};
+    auto quantity{static_cast<uint32_t>(quantityDist(rng) * 50)};
     orderQueue.Push({i, drugNames[drugIndex], quantity});
     {
       std::lock_guard lock(coutMutex);

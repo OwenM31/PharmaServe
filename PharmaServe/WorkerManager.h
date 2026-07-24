@@ -18,21 +18,21 @@
 
 class WorkerManager {
 public:
-  explicit WorkerManager(OrderQueue &queue, unsigned int maxWorkers);
+  explicit WorkerManager(OrderQueue &queue, uint32_t maxWorkers);
   ~WorkerManager(); // Needs destructor for handling stray workers
 
-  std::optional<unsigned int> SpawnWorker();
+  std::optional<uint32_t> SpawnWorker();
   void StopAll();
-  bool StopWorker(unsigned int id);
+  bool StopWorker(uint32_t id);
 
-  std::map<unsigned int, WorkerStatus::Snapshot> GetAllStatuses() const;
-  std::optional<WorkerStatus::Snapshot> GetStatus(unsigned int id) const;
+  std::map<uint32_t, WorkerStatus::Snapshot> GetAllStatuses() const;
+  std::optional<WorkerStatus::Snapshot> GetStatus(uint32_t id) const;
 
 private:
   OrderQueue &queue;
-  unsigned int maxWorkers;
-  std::map<unsigned int, std::unique_ptr<WorkerHandle>> workers;
-  unsigned int nextId{0};
+  uint32_t maxWorkers;
+  std::map<uint32_t, std::unique_ptr<WorkerHandle>> workers;
+  uint32_t nextId{0};
   mutable std::shared_mutex workersMutex;
 
   std::thread threadJoiner;

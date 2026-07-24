@@ -28,7 +28,7 @@ public:
   std::optional<double> GetTimeRemaining() const;
 
   void SetWaiting();
-  void SetWorking(int orderId, double timeRemaining);
+  void SetWorking(uint32_t orderId, double timeRemaining);
   void SetShuttingDown();
 
 private:

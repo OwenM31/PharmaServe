@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <thread>
 
-WorkerManager::WorkerManager(OrderQueue &queue, unsigned int maxWorkers)
+WorkerManager::WorkerManager(OrderQueue &queue, uint32_t maxWorkers)
     : queue(queue), maxWorkers(maxWorkers), nextId(0),
       threadJoinerRunning(true) {
   threadJoiner = std::thread(
@@ -61,7 +61,7 @@ void WorkerManager::StopAll() { // Simply flip the atomic<bool> to false then
   }
 }
 
-bool WorkerManager::StopWorker(unsigned int id) {
+bool WorkerManager::StopWorker(uint32_t id) {
   std::shared_lock<std::shared_mutex> lock(workersMutex);
 
   auto idx{workers.find(id)};
@@ -72,14 +72,14 @@ bool WorkerManager::StopWorker(unsigned int id) {
   return true;
 }
 
-std::optional<unsigned int> WorkerManager::SpawnWorker() {
+std::optional<uint32_t> WorkerManager::SpawnWorker() {
   std::unique_lock<std::shared_mutex> lock(workersMutex);
 
   if (workers.size() >= maxWorkers) {
     throw std::runtime_error("Cannot spawn worker: max workers reached");
   }
 
-  unsigned int id{nextId++};
+  uint32_t id{nextId++};
 
   auto handle{std::make_unique<WorkerHandle>()};
   handle->active.store(true);
@@ -125,11 +125,11 @@ std::optional<unsigned int> WorkerManager::SpawnWorker() {
   return id;
 }
 
-std::map<unsigned int, WorkerStatus::Snapshot>
+std::map<uint32_t, WorkerStatus::Snapshot>
 WorkerManager::GetAllStatuses() const {
   std::shared_lock<std::shared_mutex> lock(workersMutex);
 
-  std::map<unsigned int, WorkerStatus::Snapshot> result;
+  std::map<uint32_t, WorkerStatus::Snapshot> result;
   for (const auto &[id, handle] : workers) {
     result[id] = handle->status.GetSnapshot();
   }
@@ -137,7 +137,7 @@ WorkerManager::GetAllStatuses() const {
 }
 
 std::optional<WorkerStatus::Snapshot>
-WorkerManager::GetStatus(unsigned int id) const {
+WorkerManager::GetStatus(uint32_t id) const {
   std::shared_lock<std::shared_mutex> lock(workersMutex);
 
   auto idx{workers.find(id)};

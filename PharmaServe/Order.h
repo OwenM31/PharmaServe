@@ -2,8 +2,8 @@
 #include <string>
 
 struct Order {
-  unsigned int id;
+  uint32_t id;
   std::string drugName;
-  unsigned int quantity;
+  uint32_t quantity;
   double duration;
 };
