@@ -22,9 +22,9 @@ void SimulateOrderStream(OrderQueue &orderQueue, int orderCount) {
   std::cout << "\n[Generator] Starting simulation of " << orderCount
             << " orders...\n";
 
-  for (int i = 1; i <= orderCount; i++) {
+  for (unsigned int i = 1; i <= orderCount; i++) {
     int drugIndex{drugDist(rng)};
-    int quantity{quantityDist(rng) * 50};
+    auto quantity{static_cast<unsigned int>(quantityDist(rng) * 50)};
     orderQueue.Push({i, drugNames[drugIndex], quantity});
     {
       std::lock_guard lock(coutMutex);
@@ -46,13 +46,13 @@ void Worker(OrderQueue &orderQueue) {
   while (orderQueue.WorkerPop(order)) {
     {
       std::lock_guard lock(coutMutex);
-      std::cout << "[worker] dispensing order " << order.orderId << " ("
+      std::cout << "[worker] dispensing order " << order.id << " ("
                 << order.drugName << " x" << order.quantity << ")\n";
     } // Wait for .4s to simulate the robot working.
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     {
       std::lock_guard lock(coutMutex);
-      std::cout << "[worker] completed order " << order.orderId << ".\n";
+      std::cout << "[worker] completed order " << order.id << ".\n";
       std::cout << "Pending Orders: " << orderQueue.Size() << std::endl;
     }
   }

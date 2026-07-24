@@ -2,7 +2,8 @@
 #include <string>
 
 struct Order {
-	int orderId;
-	std::string drugName;
-	int quantity;
+  unsigned int id;
+  std::string drugName;
+  unsigned int quantity;
+  double duration;
 };
