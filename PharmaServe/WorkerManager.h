@@ -9,8 +9,8 @@
 #pragma once
 #include <map>
 #include <memory>
-#include <mutex>
 #include <optional>
+#include <shared_mutex>
 
 #include "OrderQueue.h"
 #include "WorkerHandle.h"
@@ -18,7 +18,7 @@
 
 class WorkerManager {
 public:
-  explicit WorkerManager(OrderQueue &queue);
+  explicit WorkerManager(OrderQueue &queue, int maxWorkers);
   ~WorkerManager(); // Needs destructor for handling stray workers
 
   std::optional<int> SpawnWorker();
@@ -30,7 +30,8 @@ public:
 
 private:
   OrderQueue &queue;
+  int maxWorkers;
   std::map<int, std::unique_ptr<WorkerHandle>> workers;
   int nextId{0};
-  mutable std::mutex workersMutex;
-}
+  mutable std::shared_mutex workersMutex;
+};
