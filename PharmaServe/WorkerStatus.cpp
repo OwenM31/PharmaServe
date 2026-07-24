@@ -1,6 +1,7 @@
 // WorkerStatus.cpp
 
 #include "WorkerStatus.h"
+#include <cstdint>
 
 // Getters
 WorkerStatus::Snapshot WorkerStatus::GetSnapshot() const {
@@ -13,7 +14,7 @@ WorkerStatus::State WorkerStatus::GetState() const {
   return state;
 }
 
-std::optional<uint32_t> WorkerStatus::GetCurrentOrderId() const {
+std::optional<uint32_t> WorkerStatus::GetOrderId() const {
   std::shared_lock lock(statusMutex);
   return currentOrderId;
 }
@@ -31,7 +32,7 @@ void WorkerStatus::SetWaiting() {
   currentTimeRemaining = std::nullopt;
 }
 
-void WorkerStatus::SetWorking(int orderId, double timeRemaining) {
+void WorkerStatus::SetWorking(uint32_t orderId, double timeRemaining) {
   std::unique_lock lock(statusMutex);
   state = State::WORKING;
   currentOrderId = orderId;
@@ -41,6 +42,4 @@ void WorkerStatus::SetWorking(int orderId, double timeRemaining) {
 void WorkerStatus::SetShuttingDown() {
   std::unique_lock lock(statusMutex);
   state = State::SHUTTING_DOWN;
-  currentOrderId = std::nullopt;
-  currentTimeRemaining = std::nullopt;
 }

@@ -17,14 +17,14 @@ public:
 
   struct Snapshot {
     State state;
-    std::optional<uint32_t> currentOrderId;
-    std::optional<double> currentTimeRemaining;
+    std::optional<uint32_t> orderId;
+    std::optional<double> timeRemaining;
   };
 
   // Helper Methods
   WorkerStatus::Snapshot GetSnapshot() const;
   WorkerStatus::State GetState() const;
-  std::optional<uint32_t> GetCurrentOrderId() const;
+  std::optional<uint32_t> GetOrderId() const;
   std::optional<double> GetTimeRemaining() const;
 
   void SetWaiting();
