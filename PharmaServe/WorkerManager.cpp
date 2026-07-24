@@ -1,7 +1,9 @@
 // WorkerManager.cpp
 
 #include "WorkerManager.h"
+#include "WorkerStatus.h"
 #include <chrono>
+#include <map>
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -13,7 +15,7 @@ WorkerManager::WorkerManager(OrderQueue &queue, unsigned int maxWorkers)
     : queue(queue), maxWorkers(maxWorkers), nextId(0),
       threadJoinerRunning(true) {
   threadJoiner = std::thread(
-      [this]() { // This thread automatically joins workers when they are ready.
+      [this]() { // This thread automatically joins workers when they finish.
         while (threadJoinerRunning.load()) {
           std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
@@ -57,6 +59,17 @@ void WorkerManager::StopAll() { // Simply flip the atomic<bool> to false then
   for (auto &[id, handle] : workers) {
     handle->active.store(false);
   }
+}
+
+bool WorkerManager::StopWorker(unsigned int id) {
+  std::shared_lock<std::shared_mutex> lock(workersMutex);
+
+  auto idx{workers.find(id)};
+  if (idx == workers.end()) {
+    return false;
+  }
+  idx->second->active.store(false);
+  return true;
 }
 
 std::optional<unsigned int> WorkerManager::SpawnWorker() {
@@ -110,4 +123,26 @@ std::optional<unsigned int> WorkerManager::SpawnWorker() {
       });
 
   return id;
+}
+
+std::map<unsigned int, WorkerStatus::Snapshot>
+WorkerManager::GetAllStatuses() const {
+  std::shared_lock<std::shared_mutex> lock(workersMutex);
+
+  std::map<unsigned int, WorkerStatus::Snapshot> result;
+  for (const auto &[id, handle] : workers) {
+    result[id] = handle->status.GetSnapshot();
+  }
+  return result;
+}
+
+std::optional<WorkerStatus::Snapshot>
+WorkerManager::GetStatus(unsigned int id) const {
+  std::shared_lock<std::shared_mutex> lock(workersMutex);
+
+  auto idx{workers.find(id)};
+  if (idx == workers.end()) {
+    return std::nullopt;
+  }
+  return idx->second->status.GetSnapshot();
 }

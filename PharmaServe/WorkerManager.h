@@ -22,11 +22,11 @@ public:
   ~WorkerManager(); // Needs destructor for handling stray workers
 
   std::optional<unsigned int> SpawnWorker();
-  bool StopWorker(unsigned int id);
   void StopAll();
+  bool StopWorker(unsigned int id);
 
   std::map<unsigned int, WorkerStatus::Snapshot> GetAllStatuses() const;
-  WorkerStatus::Snapshot GetStatus(int id) const;
+  std::optional<WorkerStatus::Snapshot> GetStatus(unsigned int id) const;
 
 private:
   OrderQueue &queue;
