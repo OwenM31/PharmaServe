@@ -1,4 +1,3 @@
-#include <chrono>
 #include <gtest/gtest.h>
 #include <thread>
 
@@ -12,23 +11,23 @@ TEST(OrderQueueTest, StartsEmpty) {
 
 TEST(OrderQueueTest, PushIncreasesSize) {
   OrderQueue queue;
-  queue.Push({1, "Amoxicillin", 30});
+  queue.Push({1, "Amoxicillin", 30, 5.0});
   EXPECT_FALSE(queue.IsEmpty());
   EXPECT_EQ(queue.Size(), 1u);
 }
 
 TEST(OrderQueueTest, PopReturnsOrdersInFifoOrder) {
   OrderQueue queue;
-  queue.Push({1, "Amoxicillin", 30});
-  queue.Push({2, "Tylenol", 90});
+  queue.Push({1, "Amoxicillin", 30, 5.0});
+  queue.Push({2, "Tylenol", 90, 5.0});
 
   Order first;
   ASSERT_TRUE(queue.WorkerPop(first));
-  EXPECT_EQ(first.orderId, 1);
+  EXPECT_EQ(first.id, 1);
 
   Order second;
   ASSERT_TRUE(queue.WorkerPop(second));
-  EXPECT_EQ(second.orderId, 2);
+  EXPECT_EQ(second.id, 2);
 }
 
 TEST(OrderQueueTest, PopFailsOnEmptyQueue) {
@@ -58,8 +57,8 @@ TEST(OrderQueueTest, ShutdownUnblocksWaitingPop) {
 
 TEST(OrderQueueTest, WaitUntilEmptyBlocksUntilQueueDrained) {
   OrderQueue queue;
-  queue.Push({1, "Aspirin", 100});
-  queue.Push({2, "Ibuprofen", 50});
+  queue.Push({1, "Aspirin", 100, 5.0});
+  queue.Push({2, "Ibuprofen", 50, 5.0});
 
   std::atomic<bool> waitFinished(false);
   std::thread waiting_thread([&queue, &waitFinished]() {
@@ -76,4 +75,3 @@ TEST(OrderQueueTest, WaitUntilEmptyBlocksUntilQueueDrained) {
   waiting_thread.join();
   EXPECT_TRUE(waitFinished);
 }
-
