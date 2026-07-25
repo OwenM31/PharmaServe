@@ -32,7 +32,7 @@ public:
   void SetShuttingDown();
 
 private:
-  std::shared_mutex statusMutex;
+  mutable std::shared_mutex statusMutex;
   State state;
   std::optional<uint32_t> currentOrderId;
   std::optional<double> currentTimeRemaining;
