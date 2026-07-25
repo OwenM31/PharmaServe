@@ -16,7 +16,7 @@ public:
   enum class State { CONNECTING, WAITING, WORKING, SHUTTING_DOWN };
 
   struct Snapshot {
-    State state;
+    State state{State::WAITING};
     std::optional<uint32_t> orderId;
     std::optional<double> timeRemaining;
   };
