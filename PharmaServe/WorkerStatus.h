@@ -16,7 +16,7 @@ public:
   enum class State { CONNECTING, WAITING, WORKING, SHUTTING_DOWN };
 
   struct Snapshot {
-    State state{State::WAITING};
+    State state;
     std::optional<uint32_t> orderId;
     std::optional<double> timeRemaining;
   };
@@ -33,7 +33,7 @@ public:
 
 private:
   mutable std::shared_mutex statusMutex;
-  State state;
+  State state{State::WAITING};
   std::optional<uint32_t> currentOrderId;
   std::optional<double> currentTimeRemaining;
 };

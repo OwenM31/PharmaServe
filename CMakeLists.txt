@@ -5,11 +5,13 @@ project(PharmaServe)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(pharmaserve 
+add_executable(pharmaserve
+	PharmaServe/PharmaServe.cpp
 	PharmaServe/Order.h
 	PharmaServe/OrderQueue.h
 	PharmaServe/OrderQueue.cpp
-	PharmaServe/PharmaServe.cpp
+	PharmaServe/WorkerManager.cpp
+	PharmaServe/WorkerStatus.cpp
 )
 
 target_include_directories(pharmaserve PRIVATE PharmaServe)
