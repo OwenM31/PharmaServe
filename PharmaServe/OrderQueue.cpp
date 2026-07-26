@@ -18,6 +18,11 @@ bool OrderQueue::Pop(Order &outOrder) {
   }
   outOrder = orderQueue.front();
   orderQueue.pop();
+
+  if (orderQueue.empty()) { // If now empty, alert `WaitUntilEmpty` thread.
+    cv.notify_all();
+  }
+
   return true;
 }
 
@@ -35,8 +40,7 @@ bool OrderQueue::WorkerPop(Order &outOrder) {
   outOrder = orderQueue.front();
   orderQueue.pop();
 
-  // If now empty, alert `WaitUntilEmpty` thread.
-  if (orderQueue.empty()) {
+  if (orderQueue.empty()) { // If now empty, alert `WaitUntilEmpty` thread.
     cv.notify_all();
   }
 
