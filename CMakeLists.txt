@@ -7,11 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(pharmaserve
 	PharmaServe/PharmaServe.cpp
-	PharmaServe/Order.h
-	PharmaServe/OrderQueue.h
-	PharmaServe/OrderQueue.cpp
-	PharmaServe/WorkerManager.cpp
-	PharmaServe/WorkerStatus.cpp
+	PharmaServe/OrderQueue/Order.h
+	PharmaServe/OrderQueue/OrderQueue.h
+	PharmaServe/OrderQueue/OrderQueue.cpp
+	PharmaServe/WorkerManager/WorkerManager.cpp
+	PharmaServe/WorkerManager/WorkerStatus.cpp
 )
 
 target_include_directories(pharmaserve PRIVATE PharmaServe)

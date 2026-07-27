@@ -9,11 +9,11 @@ enable_testing()
 
 add_executable(pharmaserve_tests
 	OrderQueueTests.cpp
-	../PharmaServe/OrderQueue.cpp
+	../PharmaServe/OrderQueue/OrderQueue.cpp
 	WorkerStatusTests.cpp
-	../PharmaServe/WorkerStatus.cpp
+	../PharmaServe/WorkerManager/WorkerStatus.cpp
 	WorkerManagerTests.cpp
-	../PharmaServe/WorkerManager.cpp
+	../PharmaServe/WorkerManager/WorkerManager.cpp
 )
 
 target_link_libraries(pharmaserve_tests

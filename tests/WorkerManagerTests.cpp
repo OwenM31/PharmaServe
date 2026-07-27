@@ -1,7 +1,7 @@
 // WorkerManagerTests.cpp
 
-#include "../PharmaServe/OrderQueue.h"
-#include "../PharmaServe/WorkerManager.h"
+#include "../PharmaServe/OrderQueue/OrderQueue.h"
+#include "../PharmaServe/WorkerManager/WorkerManager.h"
 #include <cassert>
 #include <chrono>
 #include <gtest/gtest.h>

@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <optional>
 
-#include "../PharmaServe/WorkerStatus.h"
+#include "../PharmaServe/WorkerManager/WorkerStatus.h"
 
 TEST(WorkerStatusTest, StatusDefaultsToWaiting) {
   WorkerStatus status;

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <thread>
 
-#include "../PharmaServe/OrderQueue.h"
+#include "../PharmaServe/OrderQueue/OrderQueue.h"
 
 TEST(OrderQueueTest, StartsEmpty) {
   OrderQueue queue;
