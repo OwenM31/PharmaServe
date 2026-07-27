@@ -21,7 +21,7 @@ public:
   explicit WorkerManager(OrderQueue &queue, uint32_t maxWorkers);
   ~WorkerManager(); // Needs destructor for handling stray workers
 
-  std::optional<uint32_t> SpawnWorker();
+  uint32_t SpawnWorker();
   void StopAll();
   bool StopWorker(uint32_t id);
 
@@ -32,7 +32,7 @@ private:
   OrderQueue &queue;
   uint32_t maxWorkers;
   std::map<uint32_t, std::unique_ptr<WorkerHandle>> workers;
-  uint32_t nextId{0};
+  uint32_t nextId{1};
   mutable std::shared_mutex workersMutex;
 
   std::thread threadJoiner;

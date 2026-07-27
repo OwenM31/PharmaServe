@@ -12,7 +12,7 @@
 #include <thread>
 
 WorkerManager::WorkerManager(OrderQueue &queue, uint32_t maxWorkers)
-    : queue(queue), maxWorkers(maxWorkers), nextId(0),
+    : queue(queue), maxWorkers(maxWorkers), nextId(1),
       threadJoinerRunning(true) {
   threadJoiner = std::thread(
       [this]() { // This thread automatically joins workers when they finish.
@@ -72,7 +72,7 @@ bool WorkerManager::StopWorker(uint32_t id) {
   return true;
 }
 
-std::optional<uint32_t> WorkerManager::SpawnWorker() {
+uint32_t WorkerManager::SpawnWorker() {
   std::unique_lock<std::shared_mutex> lock(workersMutex);
 
   if (workers.size() >= maxWorkers) {
@@ -120,6 +120,7 @@ std::optional<uint32_t> WorkerManager::SpawnWorker() {
           }
         }
         handlePtr->status.SetShuttingDown();
+        handlePtr->finished.store(true);
       });
 
   return id;

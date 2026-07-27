@@ -12,6 +12,8 @@ add_executable(pharmaserve_tests
 	../PharmaServe/OrderQueue.cpp
 	WorkerStatusTests.cpp
 	../PharmaServe/WorkerStatus.cpp
+	WorkerManagerTests.cpp
+	../PharmaServe/WorkerManager.cpp
 )
 
 target_link_libraries(pharmaserve_tests
