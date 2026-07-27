@@ -2,6 +2,7 @@
 
 #include "WorkerStatus.h"
 #include <cstdint>
+#include <mutex>
 
 // Getters
 WorkerStatus::Snapshot WorkerStatus::GetSnapshot() const {
