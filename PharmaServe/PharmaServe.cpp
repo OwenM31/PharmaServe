@@ -24,7 +24,7 @@ void SimulateOrderStream(OrderQueue &orderQueue, int orderCount) {
   for (uint32_t i = 1; i <= orderCount; i++) {
     int drugIndex{drugDist(rng)};
     auto quantity{static_cast<uint32_t>(quantityDist(rng) * 50)};
-    orderQueue.Push({i, drugNames[drugIndex], quantity});
+    orderQueue.Push({drugNames[drugIndex], quantity});
     {
       std::lock_guard lock(coutMutex);
       std::cout << "[Generator] Pushed order " << i << " ("
@@ -85,11 +85,11 @@ int main(int argc, char *argv[]) {
     generator.join();
   } else {
     std::cout << "\n[Ingesting Orders from source...]" << std::endl;
-    orderQueue.Push({1, "Aspirin", 100});
-    orderQueue.Push({2, "Ibuprofen", 200});
-    orderQueue.Push({3, "Tylenol", 150});
+    orderQueue.Push({"Aspirin", 100});
+    orderQueue.Push({"Ibuprofen", 200});
+    orderQueue.Push({"Tylenol", 150});
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    orderQueue.Push({4, "Amoxicillin", 30});
+    orderQueue.Push({"Amoxicillin", 30});
 
     std::this_thread::sleep_for(std::chrono::seconds(3));
     orderQueue.Shutdown();
