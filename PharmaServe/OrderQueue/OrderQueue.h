@@ -21,8 +21,9 @@ private:
   double CalculateDuration(const OrderRequest &request);
 
 public:
-  void Push(const OrderRequest &request);
-  void PushBatch(const std::vector<OrderRequest> &requestBatch);
+  uint64_t Push(const OrderRequest &request);
+  std::vector<uint64_t>
+  PushBatch(const std::vector<OrderRequest> &requestBatch);
 
   bool WorkerPop(Order &outOrder);
 

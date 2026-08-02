@@ -3,11 +3,13 @@
 #include "OrderQueue.h"
 #include "OrderRequest.h"
 #include <cmath>
+#include <cstdint>
 #include <mutex>
 #include <vector>
 
-void OrderQueue::Push(const OrderRequest &request) {
+uint64_t OrderQueue::Push(const OrderRequest &request) {
   // Adds an order and wakes a `WorkerPop` thread.
+  // Returns the assigned id.
 
   Order stampedOrder{};
   stampedOrder.drugName = request.drugName;
@@ -21,9 +23,15 @@ void OrderQueue::Push(const OrderRequest &request) {
   orderQueue.push(stampedOrder);
 
   cv.notify_one();
+
+  return stampedOrder.id;
 }
 
-void OrderQueue::PushBatch(const std::vector<OrderRequest> &requestBatch) {
+std::vector<uint64_t>
+OrderQueue::PushBatch(const std::vector<OrderRequest> &requestBatch) {
+  std::vector<uint64_t> batchIds;
+  // Returns vector of the assigned ids.
+
   std::lock_guard<std::mutex> lock(mutex); // Hold lock for the whole batch.
   for (auto req : requestBatch) {
 
@@ -34,8 +42,11 @@ void OrderQueue::PushBatch(const std::vector<OrderRequest> &requestBatch) {
     stampedOrder.duration = CalculateDuration(req);
 
     orderQueue.push(stampedOrder);
+    batchIds.push_back(stampedOrder.id);
   }
   cv.notify_all();
+
+  return batchIds;
 }
 
 bool OrderQueue::Pop(Order &outOrder) {

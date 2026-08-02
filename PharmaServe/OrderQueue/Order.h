@@ -4,7 +4,7 @@
 #include <string>
 
 struct Order {
-  uint32_t id;
+  uint64_t id;
   std::string drugName;
   uint32_t quantity;
   double duration;
