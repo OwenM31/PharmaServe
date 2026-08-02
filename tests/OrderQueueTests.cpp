@@ -1,3 +1,5 @@
+// OrderQueueTests.cpp
+
 #include <gtest/gtest.h>
 #include <thread>
 
@@ -11,15 +13,15 @@ TEST(OrderQueueTest, StartsEmpty) {
 
 TEST(OrderQueueTest, PushIncreasesSize) {
   OrderQueue queue;
-  queue.Push({1, "Amoxicillin", 30, 5.0});
+  queue.Push({"Amoxicillin", 30});
   EXPECT_FALSE(queue.IsEmpty());
   EXPECT_EQ(queue.Size(), 1u);
 }
 
 TEST(OrderQueueTest, PopReturnsOrdersInFifoOrder) {
   OrderQueue queue;
-  queue.Push({1, "Amoxicillin", 30, 5.0});
-  queue.Push({2, "Tylenol", 90, 5.0});
+  queue.Push({"Amoxicillin", 30});
+  queue.Push({"Tylenol", 90});
 
   Order first;
   ASSERT_TRUE(queue.WorkerPop(first));
@@ -57,8 +59,8 @@ TEST(OrderQueueTest, ShutdownUnblocksWaitingPop) {
 
 TEST(OrderQueueTest, WaitUntilEmptyBlocksUntilQueueDrained) {
   OrderQueue queue;
-  queue.Push({1, "Aspirin", 100, 5.0});
-  queue.Push({2, "Ibuprofen", 50, 5.0});
+  queue.Push({"Aspirin", 100});
+  queue.Push({"Ibuprofen", 50});
 
   std::atomic<bool> waitFinished(false);
   std::thread waiting_thread([&queue, &waitFinished]() {
@@ -74,4 +76,51 @@ TEST(OrderQueueTest, WaitUntilEmptyBlocksUntilQueueDrained) {
 
   waiting_thread.join();
   EXPECT_TRUE(waitFinished);
+}
+
+TEST(OrderQueueTest, PushBatchIncreasesSizeByBatchCount) {
+  OrderQueue queue;
+  queue.PushBatch({{"Aspirin", 100}, {"Ibuprofen", 50}, {"Tylenol", 90}});
+  EXPECT_EQ(queue.Size(), 3);
+}
+
+TEST(OrderQueueTest, PushBatchAssignsSequentialIds) {
+  OrderQueue queue;
+  queue.PushBatch({{"Aspirin", 100}, {"Ibuprofen", 50}, {"Tylenol", 90}});
+  ASSERT_EQ(queue.Size(), 3);
+  Order ord1, ord2, ord3;
+  queue.Pop(ord1);
+  queue.Pop(ord2);
+  queue.Pop(ord3);
+  EXPECT_EQ(ord1.id, 1);
+  EXPECT_EQ(ord2.id, 2);
+  EXPECT_EQ(ord3.id, 3);
+}
+
+TEST(OrderQueueTest, PushBatchContinuesIdSequence) {
+  OrderQueue queue;
+  queue.Push({"Amoxicillin", 150});
+  queue.PushBatch({{"Aspirin", 100}, {"Ibuprofen", 50}, {"Tylenol", 90}});
+  ASSERT_EQ(queue.Size(), 4);
+  Order ord1, ord2, ord3, ord4;
+  queue.Pop(ord1);
+  queue.Pop(ord2);
+  queue.Pop(ord3);
+  queue.Pop(ord4);
+  EXPECT_EQ(ord1.id, 1);
+  EXPECT_EQ(ord1.drugName, "Amoxicillin");
+  EXPECT_EQ(ord2.id, 2);
+  EXPECT_EQ(ord2.drugName, "Aspirin");
+  EXPECT_EQ(ord3.id, 3);
+  EXPECT_EQ(ord3.drugName, "Ibuprofen");
+  EXPECT_EQ(ord4.id, 4);
+  EXPECT_EQ(ord4.drugName, "Tylenol");
+}
+
+TEST(OrderQueueTest, CalculateDurationZeroGuard) {
+  OrderQueue queue;
+  queue.Push({"Placebo", 0});
+  Order ord1;
+  queue.Pop(ord1);
+  ASSERT_EQ(ord1.duration, 0);
 }
