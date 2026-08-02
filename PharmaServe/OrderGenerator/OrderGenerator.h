@@ -14,7 +14,7 @@ class OrderGenerator {
 public:
   enum class State { RUNNING, PAUSED, STOPPED };
 
-  OrderGenerator(OrderQueue &queue);
+  explicit OrderGenerator(OrderQueue &queue);
   ~OrderGenerator();
 
   State GetState();
@@ -26,21 +26,23 @@ public:
   void SetDelayRange(double min, double max);
   void SetQuantityRange(uint32_t min, uint32_t max);
 
-  void SubmitRandomOrder();
-  void SubmitRandomBatch(uint32_t batchSize);
-  void SubmitOrder(OrderRequest req);
-  void SubmitBatch(std::vector<OrderRequest> reqBatch);
+  uint64_t SubmitRandomOrder();
+  std::vector<uint64_t> SubmitRandomBatch(uint32_t batchSize);
+  uint64_t SubmitOrder(OrderRequest req);
+  std::vector<uint64_t> SubmitBatch(std::vector<OrderRequest> reqBatch);
 
 private:
   std::atomic<State> state{State::PAUSED};
   OrderQueue &queue;
   std::thread generatorThread;
+
   double minDelay{1};
   double maxDelay{5};
-  uint32_t minQuantity{30};
-  uint32_t maxQuantity{150};
+  uint32_t minQuantity{3};
+  uint32_t maxQuantity{15};
 
   std::mt19937 rng;
+  std::mutex rngMutex;
   std::vector<std::string> drugNames = {"Acetaminophen",
                                         "Albuterol",
                                         "Amlodipine",
@@ -71,4 +73,7 @@ private:
                                         "Prednisone",
                                         "Rosuvastatin",
                                         "Sertraline"};
+
+  void RunLoop();
+  OrderRequest BuildRandomRequest();
 };

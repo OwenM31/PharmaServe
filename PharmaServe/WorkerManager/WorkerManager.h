@@ -18,7 +18,7 @@
 
 class WorkerManager {
 public:
-  explicit WorkerManager(OrderQueue &queue, uint32_t maxWorkers);
+  WorkerManager(OrderQueue &queue, uint32_t maxWorkers);
   ~WorkerManager(); // Needs destructor for handling stray workers
 
   uint32_t SpawnWorker();
